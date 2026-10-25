@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Settings — StudyHub</title>
+<script>
+  (function () {
+    try {
+      var settings = JSON.parse(localStorage.getItem('studyhub_settings') || '{}');
+      document.documentElement.setAttribute('data-theme', settings.theme === 'dark' ? 'dark' : 'light');
+    } catch (e) { document.documentElement.setAttribute('data-theme', 'light'); }
+    try {
+      var session = JSON.parse(localStorage.getItem('studyhub_session') || sessionStorage.getItem('studyhub_session') || 'null');
+      if (!session || !session.isAuthenticated) { window.location.replace('login.html'); }
+    } catch (e) { window.location.replace('login.html'); }
+  })();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/theme.css">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/responsive.css">
+<link rel="icon" href="assets/logos/favicon.svg" type="image/svg+xml">
+<style>
+  .settings-shell { max-width: 720px; display: flex; flex-direction: column; gap: 22px; }
+  .theme-segmented { display: inline-flex; border: 1px solid var(--color-border-strong); border-radius: var(--radius-sm); padding: 3px; gap: 3px; }
+  .theme-segmented button {
+    display: flex; align-items: center; gap: 7px; padding: 7px 14px; border-radius: 7px; border: none;
+    background: none; color: var(--color-text-secondary); font-size: 13px; font-weight: 600; cursor: pointer;
+    transition: background var(--transition-fast), color var(--transition-fast);
+  }
+  .theme-segmented button.active { background: var(--color-primary); color: #fff; }
+  .theme-segmented .icon { width: 15px; height: 15px; }
+  .about-list { font-size: 13px; color: var(--color-text-secondary); line-height: 1.9; }
+  .about-list strong { color: var(--color-text-primary); }
+</style>
+</head>
+<body data-page="settings">
+<a href="#main-content" class="skip-link">Skip to content</a>
+<div class="app-layout">
+  <aside id="sidebar" class="sidebar" aria-label="Sidebar"></aside>
+  <div class="app-main">
+    <header id="header" class="topbar"></header>
+    <main class="page-content" id="main-content">
+      <div class="settings-shell">
+
+        <div class="card">
+          <h2 class="card-title" style="margin-bottom:4px;">Appearance</h2>
+          <p class="card-subtitle" style="margin-bottom:4px;">Choose how StudyHub looks on this device.</p>
+          <div class="settings-row">
+            <div class="settings-row-info">
+              <h4>Theme</h4>
+              <p>Light and dark mode are both fully supported — your choice is remembered next time you visit.</p>
+            </div>
+            <div class="settings-row-control">
+              <div class="theme-segmented" id="theme-segmented">
+                <button type="button" data-theme-choice="light"><i data-lucide="sun" class="icon" aria-hidden="true"></i>Light</button>
+                <button type="button" data-theme-choice="dark"><i data-lucide="moon" class="icon" aria-hidden="true"></i>Dark</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2 class="card-title" style="margin-bottom:4px;">Profile</h2>
+          <p class="card-subtitle" style="margin-bottom:18px;">Update the name and email shown across StudyHub.</p>
+          <form id="profile-form">
+            <div class="form-row">
+              <div class="field" id="profile-name-field">
+                <label for="profile-name">Display name</label>
+                <input class="input" type="text" id="profile-name" maxlength="60">
+                <p class="field-error">Enter a display name.</p>
+              </div>
+              <div class="field" id="profile-email-field">
+                <label for="profile-email">Email</label>
+                <input class="input" type="email" id="profile-email" maxlength="120">
+                <p class="field-error">Enter a valid, unused email address.</p>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Save profile</button>
+          </form>
+        </div>
+
+        <div class="card">
+          <h2 class="card-title" style="margin-bottom:4px;">Notifications</h2>
+          <p class="card-subtitle" style="margin-bottom:4px;">Control what StudyHub surfaces in the bell menu.</p>
+          <div class="settings-row">
+            <div class="settings-row-info">
+              <h4>Due-date reminders</h4>
+              <p>Show a badge and list in the header bell when tasks are due today or tomorrow.</p>
+            </div>
+            <div class="settings-row-control">
+              <label class="switch">
+                <input type="checkbox" id="notif-toggle">
+                <span class="switch-track"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2 class="card-title" style="margin-bottom:4px;">Data</h2>
+          <p class="card-subtitle" style="margin-bottom:4px;">Everything is stored only in this browser's local storage.</p>
+          <div class="settings-row">
+            <div class="settings-row-info">
+              <h4>Reset to demo data</h4>
+              <p>Replace all subjects, tasks, sessions and notes with a fresh set of examples.</p>
+            </div>
+            <div class="settings-row-control">
+              <button type="button" class="btn btn-secondary" id="reset-demo-btn">Reset to demo data</button>
+            </div>
+          </div>
+          <div class="settings-row">
+            <div class="settings-row-info">
+              <h4>Clear all data</h4>
+              <p>Permanently delete every subject, task, study session and note. This cannot be undone.</p>
+            </div>
+            <div class="settings-row-control">
+              <button type="button" class="btn btn-danger" id="clear-data-btn">Clear all data</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2 class="card-title" style="margin-bottom:4px;">Account</h2>
+          <p class="card-subtitle" style="margin-bottom:4px;">Signed in as <span id="account-email-label"></span>.</p>
+          <div class="settings-row">
+            <div class="settings-row-info">
+              <h4>Log out</h4>
+              <p>Sign out of StudyHub on this device.</p>
+            </div>
+            <div class="settings-row-control">
+              <button type="button" class="btn btn-secondary" id="settings-logout-btn"><i data-lucide="log-out" class="icon" aria-hidden="true"></i>Log out</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2 class="card-title" style="margin-bottom:10px;">About StudyHub</h2>
+          <div class="about-list">
+            <div><strong>Version</strong> — 1.0.0</div>
+            <div><strong>Built with</strong> — HTML5, CSS3 and vanilla JavaScript</div>
+            <div><strong>Storage</strong> — browser localStorage, no server or account required</div>
+            <div><strong>Charts</strong> — Chart.js</div>
+            <div><strong>Icons</strong> — Lucide</div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+<div id="app-globals"></div>
+
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/settings.js"></script>
+</body>
+</html>

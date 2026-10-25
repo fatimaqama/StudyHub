@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Study Planner — StudyHub</title>
+<script>
+  (function () {
+    try {
+      var settings = JSON.parse(localStorage.getItem('studyhub_settings') || '{}');
+      document.documentElement.setAttribute('data-theme', settings.theme === 'dark' ? 'dark' : 'light');
+    } catch (e) { document.documentElement.setAttribute('data-theme', 'light'); }
+    try {
+      var session = JSON.parse(localStorage.getItem('studyhub_session') || sessionStorage.getItem('studyhub_session') || 'null');
+      if (!session || !session.isAuthenticated) { window.location.replace('login.html'); }
+    } catch (e) { window.location.replace('login.html'); }
+  })();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/theme.css">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/responsive.css">
+<link rel="icon" href="assets/logos/favicon.svg" type="image/svg+xml">
+<style>
+  .week-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; margin-bottom: 32px; }
+  .week-day { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 12px; min-height: 160px; display: flex; flex-direction: column; }
+  .week-day.is-today { border-color: var(--color-primary); box-shadow: 0 0 0 1px var(--color-primary); }
+  .week-day-head { text-align: center; margin-bottom: 10px; }
+  .week-day-head .wd { font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--color-text-muted); letter-spacing: .04em; }
+  .week-day-head .dd { font-family: var(--font-heading); font-size: 17px; font-weight: 600; margin-top: 2px; }
+  .week-day.is-today .dd { color: var(--color-primary); }
+  .session-chip { background: var(--color-surface-alt); border-left: 3px solid var(--spine-color, var(--color-border-strong)); border-radius: 6px; padding: 7px 8px; margin-bottom: 6px; font-size: 12px; position: relative; }
+  .session-chip .time { font-weight: 600; }
+  .session-chip .subj { color: var(--color-text-secondary); margin-top: 1px; }
+  .session-chip .del { position: absolute; top: 5px; right: 5px; background: none; border: none; cursor: pointer; color: var(--color-text-muted); display: none; padding: 2px; }
+  .session-chip:hover .del { display: block; }
+  .week-day-add { margin-top: auto; background: none; border: 1px dashed var(--color-border-strong); border-radius: 6px; color: var(--color-text-muted); font-size: 12px; padding: 6px; cursor: pointer; }
+  .week-day-add:hover { color: var(--color-primary); border-color: var(--color-primary); }
+  @media (max-width: 1024px) { .week-grid { grid-template-columns: repeat(4, 1fr); } }
+  @media (max-width: 640px) { .week-grid { grid-template-columns: repeat(2, 1fr); } }
+</style>
+</head>
+<body data-page="planner">
+<a href="#main-content" class="skip-link">Skip to content</a>
+<div class="app-layout">
+  <aside id="sidebar" class="sidebar" aria-label="Sidebar"></aside>
+  <div class="app-main">
+    <header id="header" class="topbar"></header>
+    <main class="page-content" id="main-content">
+
+      <div class="flex-between mt-8" style="margin-bottom:18px; flex-wrap:wrap; gap:12px;">
+        <div class="flex gap-8" style="align-items:center;">
+          <button type="button" class="icon-btn" id="week-prev" aria-label="Previous week"><i data-lucide="chevron-left" class="icon" aria-hidden="true"></i></button>
+          <div style="font-weight:600; font-family:var(--font-heading); min-width:190px; text-align:center;" id="week-label"></div>
+          <button type="button" class="icon-btn" id="week-next" aria-label="Next week"><i data-lucide="chevron-right" class="icon" aria-hidden="true"></i></button>
+          <button type="button" class="btn btn-ghost btn-sm" id="week-today">Today</button>
+        </div>
+        <button type="button" class="btn btn-primary" id="add-session-btn"><i data-lucide="plus" class="icon" aria-hidden="true"></i>Log session</button>
+      </div>
+
+      <div class="week-grid" id="week-grid"></div>
+
+      <section class="section">
+        <div class="section-head">
+          <h2>Upcoming sessions</h2>
+        </div>
+        <div class="list" id="upcoming-sessions-list"></div>
+      </section>
+
+    </main>
+  </div>
+</div>
+<div id="app-globals"></div>
+
+<!-- Add session modal -->
+<div class="modal-overlay" id="session-modal-overlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="session-modal-title">
+    <div class="modal-header">
+      <h3 id="session-modal-title">Log study session</h3>
+      <button type="button" class="modal-close" id="session-modal-close" aria-label="Close"><i data-lucide="x" class="icon" aria-hidden="true"></i></button>
+    </div>
+    <form id="session-form">
+      <div class="modal-body">
+        <input type="hidden" id="session-id">
+        <div class="field">
+          <label for="session-subject">Subject</label>
+          <select class="input" id="session-subject">
+            <option value="">Uncategorized</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="field" id="session-date-field">
+            <label for="session-date">Date</label>
+            <input class="input" type="date" id="session-date">
+            <p class="field-error">Choose a date.</p>
+          </div>
+          <div class="field">
+            <label for="session-time">Start time</label>
+            <input class="input" type="time" id="session-time">
+          </div>
+        </div>
+        <div class="field" id="session-duration-field">
+          <label for="session-duration">Duration (minutes)</label>
+          <input class="input" type="number" id="session-duration" min="5" max="600" step="5" value="60">
+          <p class="field-error">Enter a duration greater than 0.</p>
+        </div>
+        <div class="field">
+          <label for="session-notes">Notes <span class="text-muted" style="font-weight:400;">(optional)</span></label>
+          <textarea class="input" id="session-notes" placeholder="What will you focus on?"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="session-cancel-btn">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="session-save-btn">Log session</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/planner.js"></script>
+</body>
+</html>

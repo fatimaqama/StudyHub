@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — StudyHub</title>
+<script>
+  (function () {
+    try {
+      var settings = JSON.parse(localStorage.getItem('studyhub_settings') || '{}');
+      document.documentElement.setAttribute('data-theme', settings.theme === 'dark' ? 'dark' : 'light');
+    } catch (e) { document.documentElement.setAttribute('data-theme', 'light'); }
+    try {
+      var session = JSON.parse(localStorage.getItem('studyhub_session') || sessionStorage.getItem('studyhub_session') || 'null');
+      if (!session || !session.isAuthenticated) { window.location.replace('login.html'); }
+    } catch (e) { window.location.replace('login.html'); }
+  })();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/theme.css">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/responsive.css">
+<link rel="icon" href="assets/logos/favicon.svg" type="image/svg+xml">
+</head>
+<body data-page="dashboard">
+<a href="#main-content" class="skip-link">Skip to content</a>
+<div class="app-layout">
+  <aside id="sidebar" class="sidebar" aria-label="Sidebar"></aside>
+  <div class="app-main">
+    <header id="header" class="topbar"></header>
+    <main class="page-content" id="main-content">
+
+      <section class="section">
+        <div class="flex-between" style="flex-wrap:wrap; gap:16px;">
+          <div>
+            <h1 id="greeting" style="font-size:24px;">Welcome back</h1>
+            <p class="text-secondary mt-8" id="greeting-sub">Here's where things stand today.</p>
+          </div>
+          <div class="flex gap-8" style="flex-wrap:wrap;">
+            <a href="tasks.html?action=new" class="btn btn-secondary"><i data-lucide="list-plus" class="icon" aria-hidden="true"></i>Add task</a>
+            <a href="planner.html?action=new" class="btn btn-secondary"><i data-lucide="calendar-plus" class="icon" aria-hidden="true"></i>Log session</a>
+            <a href="notes.html?action=new" class="btn btn-primary"><i data-lucide="pencil-line" class="icon" aria-hidden="true"></i>New note</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section grid grid-stats" id="stats-grid"></section>
+
+      <section class="section grid grid-2">
+        <div class="card">
+          <div class="flex-between" style="margin-bottom:18px;">
+            <div>
+              <h2 class="card-title">Overall progress</h2>
+              <p class="card-subtitle" id="progress-subtitle">Across all tasks</p>
+            </div>
+          </div>
+          <div class="flex" style="align-items:center; gap:24px;">
+            <div class="ring" id="overall-ring"></div>
+            <div style="flex:1;">
+              <div class="flex-between mt-8" style="font-size:13px;">
+                <span class="text-secondary">Completed</span>
+                <strong id="completed-count">0</strong>
+              </div>
+              <div class="flex-between mt-8" style="font-size:13px;">
+                <span class="text-secondary">Remaining</span>
+                <strong id="remaining-count">0</strong>
+              </div>
+              <div class="flex-between mt-8" style="font-size:13px;">
+                <span class="text-secondary">Study streak</span>
+                <strong id="streak-inline">0 days</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="margin-bottom:18px;">
+            <h2 class="card-title">This week</h2>
+            <p class="card-subtitle">Minutes studied per day</p>
+          </div>
+          <div id="week-chart" style="display:flex; align-items:flex-end; gap:8px; height:120px;"></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <h2>Subject overview</h2>
+          <a class="section-link" href="subjects.html">Manage subjects</a>
+        </div>
+        <div class="grid grid-cards" id="subject-overview"></div>
+      </section>
+
+      <section class="section grid grid-2">
+        <div>
+          <div class="section-head">
+            <h2>Upcoming deadlines</h2>
+            <a class="section-link" href="tasks.html">View all tasks</a>
+          </div>
+          <div class="list" id="upcoming-deadlines"></div>
+        </div>
+        <div>
+          <div class="section-head">
+            <h2>Recent activity</h2>
+          </div>
+          <div class="list" id="recent-activity"></div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+<div id="app-globals"></div>
+
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/dashboard.js"></script>
+</body>
+</html>

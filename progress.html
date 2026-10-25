@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Progress — StudyHub</title>
+<script>
+  (function () {
+    try {
+      var settings = JSON.parse(localStorage.getItem('studyhub_settings') || '{}');
+      document.documentElement.setAttribute('data-theme', settings.theme === 'dark' ? 'dark' : 'light');
+    } catch (e) { document.documentElement.setAttribute('data-theme', 'light'); }
+    try {
+      var session = JSON.parse(localStorage.getItem('studyhub_session') || sessionStorage.getItem('studyhub_session') || 'null');
+      if (!session || !session.isAuthenticated) { window.location.replace('login.html'); }
+    } catch (e) { window.location.replace('login.html'); }
+  })();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/theme.css">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/responsive.css">
+<link rel="icon" href="assets/logos/favicon.svg" type="image/svg+xml">
+<style>
+  .chart-wrap { position: relative; height: 240px; }
+  .chart-center-label { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; }
+  .chart-center-label .num { font-family: var(--font-heading); font-size: 26px; font-weight: 600; line-height: 1; }
+  .chart-center-label .lbl { font-size: 12px; color: var(--color-text-muted); margin-top: 4px; }
+  .subject-progress-row { display: flex; align-items: center; gap: 16px; }
+  .subject-progress-row .name-col { width: 190px; flex-shrink: 0; display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .subject-progress-row .name-col span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; font-size: 13.5px; }
+  .subject-progress-row .bar-col { flex: 1; }
+  .subject-progress-row .pct-col { width: 46px; text-align: right; font-size: 13px; font-weight: 600; flex-shrink: 0; }
+  @media (max-width: 640px) {
+    .subject-progress-row { flex-wrap: wrap; }
+    .subject-progress-row .name-col { width: auto; flex: 1; }
+  }
+</style>
+</head>
+<body data-page="progress">
+<a href="#main-content" class="skip-link">Skip to content</a>
+<div class="app-layout">
+  <aside id="sidebar" class="sidebar" aria-label="Sidebar"></aside>
+  <div class="app-main">
+    <header id="header" class="topbar"></header>
+    <main class="page-content" id="main-content">
+
+      <section class="section grid grid-stats" id="progress-stats-grid"></section>
+
+      <section class="section grid grid-2">
+        <div class="card">
+          <div style="margin-bottom:16px;">
+            <h2 class="card-title">Weekly study activity</h2>
+            <p class="card-subtitle">Hours studied over the last 7 days</p>
+          </div>
+          <div class="chart-wrap"><canvas id="weekly-chart" role="img" aria-label="Bar chart of hours studied per day for the last seven days"></canvas></div>
+        </div>
+        <div class="card">
+          <div style="margin-bottom:16px;">
+            <h2 class="card-title">Task completion</h2>
+            <p class="card-subtitle">Completed vs remaining tasks</p>
+          </div>
+          <div class="chart-wrap">
+            <canvas id="completion-chart" role="img" aria-label="Doughnut chart of completed versus remaining tasks"></canvas>
+            <div class="chart-center-label">
+              <div class="num" id="completion-center-num">0%</div>
+              <div class="lbl">complete</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-head"><h2>Subject progress</h2></div>
+        <div class="card" id="subject-progress-card">
+          <div class="list" id="subject-progress-list"></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-head"><h2>Recent activity</h2></div>
+        <div class="list" id="progress-activity-list"></div>
+      </section>
+
+    </main>
+  </div>
+</div>
+<div id="app-globals"></div>
+
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/progress.js"></script>
+</body>
+</html>

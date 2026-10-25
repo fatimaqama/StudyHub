@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Subjects — StudyHub</title>
+<script>
+  (function () {
+    try {
+      var settings = JSON.parse(localStorage.getItem('studyhub_settings') || '{}');
+      document.documentElement.setAttribute('data-theme', settings.theme === 'dark' ? 'dark' : 'light');
+    } catch (e) { document.documentElement.setAttribute('data-theme', 'light'); }
+    try {
+      var session = JSON.parse(localStorage.getItem('studyhub_session') || sessionStorage.getItem('studyhub_session') || 'null');
+      if (!session || !session.isAuthenticated) { window.location.replace('login.html'); }
+    } catch (e) { window.location.replace('login.html'); }
+  })();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/theme.css">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/responsive.css">
+<link rel="icon" href="assets/logos/favicon.svg" type="image/svg+xml">
+</head>
+<body data-page="subjects">
+<a href="#main-content" class="skip-link">Skip to content</a>
+<div class="app-layout">
+  <aside id="sidebar" class="sidebar" aria-label="Sidebar"></aside>
+  <div class="app-main">
+    <header id="header" class="topbar"></header>
+    <main class="page-content" id="main-content">
+
+      <div class="flex-between mt-8" style="margin-bottom:22px; flex-wrap:wrap; gap:12px;">
+        <p class="text-secondary" style="max-width:520px;">Every task, note and study session is tied back to a subject — colors and icons carry through the whole app so you always know what you're looking at.</p>
+        <button type="button" class="btn btn-primary" id="add-subject-btn"><i data-lucide="plus" class="icon" aria-hidden="true"></i>Add subject</button>
+      </div>
+
+      <div class="grid grid-cards" id="subjects-grid"></div>
+
+    </main>
+  </div>
+</div>
+<div id="app-globals"></div>
+
+<!-- Add / edit subject modal -->
+<div class="modal-overlay" id="subject-modal-overlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="subject-modal-title">
+    <div class="modal-header">
+      <h3 id="subject-modal-title">Add subject</h3>
+      <button type="button" class="modal-close" id="subject-modal-close" aria-label="Close"><i data-lucide="x" class="icon" aria-hidden="true"></i></button>
+    </div>
+    <form id="subject-form">
+      <div class="modal-body">
+        <input type="hidden" id="subject-id">
+        <div class="field" id="subject-name-field">
+          <label for="subject-name">Subject name</label>
+          <input class="input" type="text" id="subject-name" placeholder="e.g. Mathematics" maxlength="60">
+          <p class="field-error">Give this subject a name.</p>
+        </div>
+        <div class="field">
+          <label>Color</label>
+          <div class="swatch-grid" id="subject-color-grid"></div>
+        </div>
+        <div class="field">
+          <label>Icon</label>
+          <div class="icon-grid" id="subject-icon-grid"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="subject-cancel-btn">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="subject-save-btn">Add subject</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/subjects.js"></script>
+</body>
+</html>

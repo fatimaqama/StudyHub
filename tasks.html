@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tasks — StudyHub</title>
+<script>
+  (function () {
+    try {
+      var settings = JSON.parse(localStorage.getItem('studyhub_settings') || '{}');
+      document.documentElement.setAttribute('data-theme', settings.theme === 'dark' ? 'dark' : 'light');
+    } catch (e) { document.documentElement.setAttribute('data-theme', 'light'); }
+    try {
+      var session = JSON.parse(localStorage.getItem('studyhub_session') || sessionStorage.getItem('studyhub_session') || 'null');
+      if (!session || !session.isAuthenticated) { window.location.replace('login.html'); }
+    } catch (e) { window.location.replace('login.html'); }
+  })();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/theme.css">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/responsive.css">
+<link rel="icon" href="assets/logos/favicon.svg" type="image/svg+xml">
+</head>
+<body data-page="tasks">
+<a href="#main-content" class="skip-link">Skip to content</a>
+<div class="app-layout">
+  <aside id="sidebar" class="sidebar" aria-label="Sidebar"></aside>
+  <div class="app-main">
+    <header id="header" class="topbar"></header>
+    <main class="page-content" id="main-content">
+
+      <div class="toolbar">
+        <div class="input-icon-wrap search-field">
+          <i data-lucide="search" class="icon" aria-hidden="true"></i>
+          <input class="input" type="text" id="task-search" placeholder="Search tasks…">
+        </div>
+        <select class="input" id="task-filter-subject">
+          <option value="all">All subjects</option>
+        </select>
+        <select class="input" id="task-filter-priority">
+          <option value="all">All priorities</option>
+          <option value="high">High priority</option>
+          <option value="medium">Medium priority</option>
+          <option value="low">Low priority</option>
+        </select>
+        <select class="input" id="task-filter-status">
+          <option value="all">All statuses</option>
+          <option value="pending">Pending</option>
+          <option value="completed">Completed</option>
+        </select>
+        <select class="input" id="task-sort">
+          <option value="due">Sort: due date</option>
+          <option value="priority">Sort: priority</option>
+          <option value="created">Sort: newest</option>
+          <option value="alpha">Sort: A–Z</option>
+        </select>
+        <button type="button" class="btn btn-primary" id="add-task-btn"><i data-lucide="plus" class="icon" aria-hidden="true"></i>Add task</button>
+      </div>
+
+      <p class="text-muted" id="task-count-label" style="font-size:13px; margin-bottom:14px;"></p>
+
+      <div class="list" id="tasks-list"></div>
+
+    </main>
+  </div>
+</div>
+<div id="app-globals"></div>
+
+<!-- Add / edit task modal -->
+<div class="modal-overlay" id="task-modal-overlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="task-modal-title">
+    <div class="modal-header">
+      <h3 id="task-modal-title">Add task</h3>
+      <button type="button" class="modal-close" id="task-modal-close" aria-label="Close"><i data-lucide="x" class="icon" aria-hidden="true"></i></button>
+    </div>
+    <form id="task-form">
+      <div class="modal-body">
+        <input type="hidden" id="task-id">
+        <div class="field" id="task-title-field">
+          <label for="task-title">Title</label>
+          <input class="input" type="text" id="task-title" placeholder="e.g. Finish lab report" maxlength="120">
+          <p class="field-error">Give the task a title.</p>
+        </div>
+        <div class="field">
+          <label for="task-description">Description <span class="text-muted" style="font-weight:400;">(optional)</span></label>
+          <textarea class="input" id="task-description" placeholder="Any extra detail worth remembering"></textarea>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label for="task-subject">Subject</label>
+            <select class="input" id="task-subject">
+              <option value="">Uncategorized</option>
+            </select>
+          </div>
+          <div class="field" id="task-due-field">
+            <label for="task-due">Due date</label>
+            <input class="input" type="date" id="task-due">
+            <p class="field-error">Choose a due date.</p>
+          </div>
+        </div>
+        <div class="field">
+          <label>Priority</label>
+          <div class="flex gap-8">
+            <label class="btn btn-secondary btn-sm" style="flex:1; cursor:pointer;" data-priority-label="low">
+              <input type="radio" name="priority" value="low" style="display:none;"> Low
+            </label>
+            <label class="btn btn-secondary btn-sm" style="flex:1; cursor:pointer;" data-priority-label="medium">
+              <input type="radio" name="priority" value="medium" style="display:none;" checked> Medium
+            </label>
+            <label class="btn btn-secondary btn-sm" style="flex:1; cursor:pointer;" data-priority-label="high">
+              <input type="radio" name="priority" value="high" style="display:none;"> High
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="task-cancel-btn">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="task-save-btn">Add task</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/tasks.js"></script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Log in — StudyHub</title>
+<script>
+  // Apply saved theme before first paint, and skip the login form entirely
+  // if there's already a valid session.
+  (function () {
+    try {
+      var settings = JSON.parse(localStorage.getItem('studyhub_settings') || '{}');
+      document.documentElement.setAttribute('data-theme', settings.theme === 'dark' ? 'dark' : 'light');
+    } catch (e) { document.documentElement.setAttribute('data-theme', 'light'); }
+    try {
+      var session = JSON.parse(localStorage.getItem('studyhub_session') || 'null');
+      if (session && session.isAuthenticated) window.location.replace('dashboard.html');
+    } catch (e) { /* no valid session — stay on login */ }
+  })();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/theme.css">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/responsive.css">
+<link rel="icon" href="assets/logos/favicon.svg" type="image/svg+xml">
+</head>
+<body>
+<div class="auth-page">
+  <button type="button" class="icon-btn auth-theme-toggle" data-theme-toggle aria-label="Toggle theme"></button>
+
+  <div class="auth-card">
+    <div class="auth-brand">
+      <div class="brand-mark">SH</div>
+      <h1>Welcome to StudyHub</h1>
+      <p>Log in to get back to your subjects, tasks and study plan.</p>
+    </div>
+
+    <div class="auth-error" id="login-error">
+      <i data-lucide="circle-alert" class="icon" aria-hidden="true"></i>
+      <span id="login-error-text">Something went wrong.</span>
+    </div>
+
+    <form id="login-form" novalidate>
+      <div class="field" id="email-field">
+        <label for="email">Email</label>
+        <div class="input-icon-wrap">
+          <i data-lucide="mail" class="icon" aria-hidden="true"></i>
+          <input class="input" type="email" id="email" name="email" placeholder="you@studyhub.app" autocomplete="username">
+        </div>
+        <p class="field-error">Enter your email address.</p>
+      </div>
+
+      <div class="field" id="password-field">
+        <label for="password">Password</label>
+        <div class="input-icon-wrap">
+          <i data-lucide="lock" class="icon" aria-hidden="true"></i>
+          <input class="input" type="password" id="password" name="password" placeholder="Enter your password" autocomplete="current-password">
+          <button type="button" class="input-toggle" id="toggle-password" aria-label="Show password">
+            <i data-lucide="eye" class="icon" aria-hidden="true"></i>
+          </button>
+        </div>
+        <p class="field-error">Enter your password.</p>
+      </div>
+
+      <div class="checkbox-row mt-8" style="margin-bottom: 20px;">
+        <input type="checkbox" id="remember" name="remember" checked>
+        <label for="remember" style="margin:0; font-weight:500; font-size:13.5px; cursor:pointer;">Keep me signed in on this device</label>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block" id="login-submit">
+        <span>Log in</span>
+        <i data-lucide="arrow-right" class="icon" aria-hidden="true"></i>
+      </button>
+    </form>
+
+    <div class="auth-demo-hint">
+      Portfolio demo — no real account needed. Use <strong>demo@studyhub.app</strong> / <strong>demo1234</strong>, or explore with any new email and password.
+    </div>
+  </div>
+
+  <p class="auth-footer" style="position:absolute; bottom:20px;">StudyHub is a self-contained demo. Data stays in this browser only.</p>
+</div>
+
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/login.js"></script>
+</body>
+</html>
